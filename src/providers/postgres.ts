@@ -2,7 +2,7 @@
 import { QueryBuilder } from '@klasa/querybuilder';
 import { SQLProvider, SchemaEntry, SchemaFolder, SettingsFolderUpdateResult, Type } from 'klasa';
 import { Pool, Submittable, QueryResultRow, QueryArrayConfig, QueryConfig, QueryArrayResult, QueryResult, PoolConfig } from 'pg';
-import { mergeDefault } from '@klasa/utils';
+import { mergeDefault, makeObject, isNumber } from '@klasa/utils';
 import { ENABLE_POSTGRES } from '../../config';
 import { run as databaseInitRun } from '../lib/util/DatabaseInit';
 import { AnyObject } from '../lib/types/util';
@@ -337,6 +337,48 @@ export default class extends SQLProvider {
 				return 'NULL';
 			default:
 				throw new TypeError(`Cannot serialize a ${new Type(value)}`);
+		}
+	}
+
+	// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+	// @ts-ignore 2416
+	protected parseEntry(table: string, raw: Record<string, unknown> | null) {
+		if (!raw) return null;
+
+		const gateway = this.client.gateways.get(table);
+		if (typeof gateway === 'undefined') return raw;
+
+		const object = { id: raw.id };
+		for (const entry of gateway.schema.values(true)) {
+			makeObject(entry.path, this.parseValue(raw[entry.path], entry), object);
+		}
+
+		return object;
+	}
+
+	protected parseValue(value: unknown, schemaEntry: SchemaEntry): unknown {
+		if (value === null || typeof value === 'undefined') return schemaEntry.default;
+		return Array.isArray(value)
+			? value.map(element => this.parseValuePrimitive(element, schemaEntry.type))
+			: this.parseValuePrimitive(value, schemaEntry.type);
+	}
+
+	protected parseValuePrimitive(value: unknown, type: string) {
+		switch (type) {
+			case 'number':
+			case 'float': {
+				const float = typeof value === 'string' ? Number.parseFloat(value) : value;
+				return isNumber(float) ? float : null;
+			}
+			case 'integer': {
+				const integer = typeof value === 'string' ? Number.parseInt(value, 10) : value;
+				return isNumber(integer) ? integer : null;
+			}
+			case 'string': {
+				return typeof value === 'string' ? value.trim() : null;
+			}
+			default:
+				return value;
 		}
 	}
 

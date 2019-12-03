@@ -87,10 +87,9 @@ export class PostgresCommonQuery implements CommonQuery {
 		const returned = await this.provider.runOne<UpsertTwitchStreamReturning>(/* sql */`
 			UPDATE twitch_stream_subscriptions
 			SET
-				"guild_ids" = ARRAY_REMOVE(guild_ids, $2)
+				"guild_ids" = ARRAY_REMOVE(guild_ids, $2::VARCHAR)
 			WHERE
 				"id" = $1
-			LIMIT 1
 			RETURNING guild_ids;
 		`, [streamerID, guildID]);
 		return returned.guild_ids.length === 0;
@@ -109,7 +108,7 @@ export class PostgresCommonQuery implements CommonQuery {
 		return this.provider.runAll<UpdatePurgeTwitchStreamReturning>(/* sql */`
 			UPDATE twitch_stream_subscriptions
 			SET
-				"guild_ids" = ARRAY_REMOVE(guild_ids, $1)
+				"guild_ids" = ARRAY_REMOVE(guild_ids, $1::VARCHAR)
 			WHERE
 				$1 = ANY(guild_ids)
 			RETURNING id, guild_ids;
@@ -268,7 +267,12 @@ export class PostgresCommonQuery implements CommonQuery {
 	}
 
 	public async fetchTwitchStreamSubscription(streamerID: string) {
-		const entry = await this.provider.get(Databases.TwitchStreamSubscriptions, streamerID) as RawTwitchStreamSubscriptionSettings;
+		const entry = await this.provider.runOne<RawTwitchStreamSubscriptionSettings>(/* sql */`
+			SELECT *
+			FROM twitch_stream_subscriptions
+			WHERE
+				"id" = ${this.provider.cString(streamerID)}
+			LIMIT 1;`);
 		return entry === null
 			? null
 			: {

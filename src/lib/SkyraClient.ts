@@ -28,9 +28,11 @@ import {
 	CLIENT_SECRET,
 	ENABLE_LAVALINK,
 	ENABLE_POSTGRES,
+	ENABLE_INFLUX,
 	EVLYN_PORT,
 	LAVALINK_PASSWORD,
 	PGSQL_DATABASE_PASSWORD,
+	INFLUX_OPTIONS,
 	TOKENS,
 	VERSION,
 	WEBHOOK_ERROR
@@ -49,6 +51,8 @@ import { CommonQuery } from './queries/common';
 import { PostgresCommonQuery } from './queries/postgres';
 import { JsonCommonQuery } from './queries/json';
 import { initClean } from './util/clean';
+import { InfluxDB } from 'influx';
+import { SchemaSettingsUpdate, SchemaAnnouncement } from './schemas/Audit';
 
 const g = new Colors({ text: 'green' }).format('[IPC   ]');
 const y = new Colors({ text: 'yellow' }).format('[IPC   ]');
@@ -87,6 +91,10 @@ export class SkyraClient extends KlasaClient {
 	public queries: CommonQuery = ENABLE_POSTGRES ? new PostgresCommonQuery(this) : new JsonCommonQuery(this);
 
 	public fsWatcher: FSWatcher | null = null;
+
+	public influx: InfluxDB | null = ENABLE_INFLUX
+		? new InfluxDB({ ...INFLUX_OPTIONS, schema: [SchemaSettingsUpdate, SchemaAnnouncement] })
+		: null;
 
 	/**
 	 * The ConnectFour manager
@@ -148,6 +156,11 @@ export class SkyraClient extends KlasaClient {
 
 }
 
-initClean(Object.values(TOKENS).concat([CLIENT_SECRET, LAVALINK_PASSWORD, PGSQL_DATABASE_PASSWORD, WEBHOOK_ERROR.token]));
+{
+	const raw = Object.values(TOKENS)
+		.concat([CLIENT_SECRET, LAVALINK_PASSWORD, PGSQL_DATABASE_PASSWORD, WEBHOOK_ERROR.token])
+		.filter(value => typeof value === 'string' && value !== '');
+	initClean([...new Set(raw)]);
+}
 
 SkyraClient.use(DashboardClient);
