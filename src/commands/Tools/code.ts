@@ -1,17 +1,22 @@
 import { CommandStore, KlasaMessage } from 'klasa';
-import fetch from 'node-fetch';
+import { RequestInit } from 'node-fetch';
 import { SkyraCommand } from '../../lib/structures/SkyraCommand';
 
-import languages from '../../lib/util/languages';
+import { languages } from '../../lib/util/languages';
+import { Mime } from '../../lib/util/constants';
+import { fetch, FetchResultTypes } from '../../lib/util/util';
 
 export default class extends SkyraCommand {
+
+	private readonly CODE_REGEX = /^```(\w+)\s(.+)```$/;
 
 	public constructor(store: CommandStore, file: string[], directory: string) {
 		super(store, file, directory, {
 			cooldown: 10,
+			// TODO(gc): Add proper language key
 			description: language => language.tget('COMMAND_EMOJI_DESCRIPTION'),
+			// TODO(gc): Add proper language key
 			extendedHelp: language => language.tget('COMMAND_EMOJI_EXTENDED'),
-			requiredPermissions: ['ATTACH_FILES'],
 			usage: '<code:string>',
 			flagSupport: true
 		});
@@ -20,38 +25,41 @@ export default class extends SkyraCommand {
 	public async run(message: KlasaMessage, [code]: [string]) {
 		const identifier = code.split('\n')[0].replace(/`/g, '');
 
-		const regexResult = /^```(\w+)\s(.+)```$/.exec(code);
+		const regexResult = this.CODE_REGEX.exec(code);
+		// TODO(gc): Add proper language key
 		if (!regexResult) throw 'bruh';
 		const actualCode = regexResult[2];
+		// TODO(gc): Add proper language key
 		if (!actualCode) throw 'bruh';
-
-		const body = new URLSearchParams();
-		body.append('compilerOptions', '');
-		body.append('code', actualCode);
-		body.append('stdin', '');
-		const parameters = {
-			method: 'POST',
-			body,
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded'
-			}
-		};
 
 		const langObj = languages.find(lang => lang.identifier === identifier);
 
+		// TODO(gc): Add proper language key
 		if (!langObj) throw 'missing lang';
 
-		// @ts-ignore
-		const result = await fetch(`https://pastebin.run/api/v0/run/${langObj.implementations[0].wrappers[0].identifier}`, parameters);
+		const result = await fetch(`https://pastebin.run/api/v0/run/${langObj.implementations![0].wrappers[0].identifier}`, this.formRequestParameters(actualCode), FetchResultTypes.Result);
 
 		if (!result.ok) {
 			return message.send(await result.text());
 		}
 
-		const { status, stdout, stderr } = await result.json();
-		console.log({ status, stderr, stdout });
+		const { stdout, stderr } = await result.json();
+		// TODO(Quantum): Format result
 		return message.send(stdout || stderr);
+	}
 
+	private formRequestParameters(parsedCode: string): RequestInit {
+		const body = new URLSearchParams();
+		body.append('compilerOptions', '');
+		body.append('code', parsedCode);
+		body.append('stdin', '');
+		return {
+			method: 'POST',
+			body,
+			headers: {
+				'Content-Type': Mime.Types.ApplicationFormUrlEncoded
+			}
+		} as unknown as RequestInit;
 	}
 
 }

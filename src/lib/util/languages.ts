@@ -1,17 +1,17 @@
-interface Language {
+export interface Language {
 	identifier: string;
 	name: string;
 	helloworld?: string;
 	implementations?: Implementation[];
 }
 
-interface Implementation {
+export interface Implementation {
 	label: string;
 	identifier: string;
 	wrappers: Wrapper[];
 }
 
-interface Wrapper {
+export interface Wrapper {
 	identifier: string;
 	label: string;
 	code: string;
@@ -19,7 +19,7 @@ interface Wrapper {
 	is_asm?: boolean;
 }
 
-const languages: Language[] = [
+export const languages: Language[] = [
 	{
 		identifier: 'c',
 		name: 'C',
@@ -380,6 +380,3 @@ const languages: Language[] = [
 		name: 'TypeScript-JSX'
 	}
 ];
-
-export default languages;
-
