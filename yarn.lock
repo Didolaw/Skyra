@@ -42,10 +42,10 @@
   resolved "https://registry.yarnpkg.com/@klasa/request-handler/-/request-handler-0.0.3.tgz#ed72de611ece3dd99725cb797fc13e07bb05e618"
   integrity sha512-Z1O+Aa2kW/I4Uos4EZalByveIuQKRfuRx+JCsgsogDBd95N5Ub47AH+LEd5i+uzjnJ6iDHfodpVlaHojJ4Q+ZQ==
 
-"@klasa/settings-gateway@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@klasa/settings-gateway/-/settings-gateway-0.0.3.tgz#062ce61ff2cd6ad90b1f3caab1efe9601bccb8eb"
-  integrity sha512-nNx5BMDMebhOhxaZjgjeqhvDgHA/HLf4gj+qzT0YTy/c/48OFSq9w+cK+iq0hUOJV9K1HSr519meFgFrjaJw/A==
+"@klasa/settings-gateway@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@klasa/settings-gateway/-/settings-gateway-0.0.5.tgz#a610f4cf873b440fefd4b598d234c5ae9cfb9bc5"
+  integrity sha512-zPEZ4N3qph6ATKFYZTqn6geaOh7nBHeiNVQaqk1ilOnGS76QeA9gepq1nQx8AhEMG9dnqt4+IHoDit20iopO3Q==
   dependencies:
     "@discordjs/collection" "^0.1.3"
     "@klasa/querybuilder" "^0.0.1"
@@ -96,10 +96,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@^12.12.16":
-  version "12.12.16"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.16.tgz#3ebcbd7bf978fa4c5120fee8be57083271a8b3ac"
-  integrity sha512-vRuMyoOr5yfNf8QWxXegOjeyjpWJxFePzHzmBOIzDIzo+rSqF94RW0PkS6y4T2+VjAWLXHWrfbIJY3E3aS7lUw==
+"@types/node@*", "@types/node@^12.12.17":
+  version "12.12.17"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.17.tgz#191b71e7f4c325ee0fb23bc4a996477d92b8c39b"
+  integrity sha512-Is+l3mcHvs47sKy+afn2O1rV4ldZFU7W8101cNlOd+MRbjM4Onida8jSZnJdTe/0Pcf25g9BNIUsuugmE6puHA==
 
 "@types/pg-types@*":
   version "1.11.5"
@@ -967,10 +967,10 @@ klasa-decorators@^0.0.1:
 
 "klasa@github:dirigeants/klasa#875/head":
   version "0.5.0-dev"
-  resolved "https://codeload.github.com/dirigeants/klasa/tar.gz/87ca9fa1404f826adfbb2f6b2c40063b8b3d8a26"
+  resolved "https://codeload.github.com/dirigeants/klasa/tar.gz/1dc92d931540687a34274193691485f65943ac69"
   dependencies:
     "@klasa/querybuilder" "^0.0.1"
-    "@klasa/settings-gateway" "^0.0.3"
+    "@klasa/settings-gateway" "^0.0.5"
     fs-nextra "^0.4.5"
 
 lavalink@^2.8.2:

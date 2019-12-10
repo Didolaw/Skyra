@@ -1,6 +1,6 @@
 // Copyright (c) 2017-2018 dirigeants. All rights reserved. MIT license.
 import { QueryBuilder } from '@klasa/querybuilder';
-import { SQLProvider, SchemaEntry, SchemaFolder, Type, SettingsUpdateResults, ReadonlyAnyObject } from 'klasa';
+import { SQLProvider, SchemaEntry, SchemaFolder, Type, SettingsUpdateResults } from 'klasa';
 import { Pool, Submittable, QueryResultRow, QueryArrayConfig, QueryConfig, QueryArrayResult, QueryResult, PoolConfig } from 'pg';
 import { mergeDefault, makeObject, isNumber } from '@klasa/utils';
 import { ENABLE_POSTGRES } from '../../config';
@@ -58,7 +58,7 @@ export default class extends SQLProvider {
 		try {
 			const result = await this.runAll(`SELECT true FROM pg_tables WHERE tablename = '${table}';`);
 			return result.length !== 0 && result[0].bool === true;
-		} catch (e) {
+		} catch {
 			return false;
 		}
 	}
@@ -94,13 +94,13 @@ export default class extends SQLProvider {
 
 	/* Row methods */
 
-	public async getAll(table: string, entries: readonly string[] = []): Promise<unknown[]> {
+	public async getAll(table: string, entries: readonly string[] = []): Promise<object[]> {
 		const filter = entries.length ? ` WHERE id IN ('${entries.join("', '")}')` : '';
 		const results = await this.runAll(/* sql */`
 			SELECT *
 			FROM ${this.cIdentifier(table)}${filter};
 		`);
-		return results.map(output => this.parseEntry(table, output));
+		return results.map(output => this.parseEntry(table, output) as object);
 	}
 
 	public async getKeys(table: string): Promise<string[]> {
@@ -138,8 +138,8 @@ export default class extends SQLProvider {
 		return Boolean(result);
 	}
 
-	public create(table: string, id: string, data: ReadonlyAnyObject | SettingsUpdateResults) {
-		const [keys, values] = this.parseUpdateInput(data);
+	public create(table: string, id: string, data: object | SettingsUpdateResults) {
+		const { keys, values } = this.parseTupleUpdateInput(data);
 
 		// Push the id to the inserts.
 		if (!keys.includes('id')) {
@@ -152,8 +152,8 @@ export default class extends SQLProvider {
 		`);
 	}
 
-	public update(table: string, id: string, data: ReadonlyAnyObject | SettingsUpdateResults) {
-		const [keys, values] = this.parseUpdateInput(data);
+	public update(table: string, id: string, data: object | SettingsUpdateResults) {
+		const { keys, values } = this.parseTupleUpdateInput(data);
 		const resolvedValues = this.cValues(table, keys, values);
 		return this.pgsql!.query(/* sql */`
 			UPDATE ${this.cIdentifier(table)}
@@ -162,7 +162,7 @@ export default class extends SQLProvider {
 		`);
 	}
 
-	public replace(table: string, id: string, data: ReadonlyAnyObject | SettingsUpdateResults) {
+	public replace(table: string, id: string, data: object | SettingsUpdateResults) {
 		return this.update(table, id, data);
 	}
 
@@ -182,7 +182,7 @@ export default class extends SQLProvider {
 		`);
 	}
 
-	public removeColumn(table: string, columns: string | string[]) {
+	public removeColumn(table: string, columns: string | readonly string[]) {
 		const escapedTable = this.cIdentifier(table);
 		const escapedColumns = typeof columns === 'string' ? this.cIdentifier(columns) : columns.map(this.cIdentifier.bind(this)).join(', ');
 		return this.run(/* sql */`
@@ -385,5 +385,3 @@ export default class extends SQLProvider {
 	}
 
 }
-
-type CreateOrUpdateValue = SettingsFolderUpdateResult[] | [string, unknown][] | Record<string, unknown> | {};
