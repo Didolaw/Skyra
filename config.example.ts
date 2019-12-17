@@ -18,7 +18,7 @@ export const ENABLE_LOCAL_POKEDEX = 'ENABLE_LOCAL_POKEDEX' in process.env ? proc
 export const EVLYN_PORT = 3100;
 
 export const NAME = 'Skyra';
-export const PREFIX = 'sd!';
+export const PREFIX = 'd!';
 export const CLIENT_ID = '';
 export const CLIENT_SECRET = '';
 export const REDIRECT_URI = 'http://localhost:3000/oauth/callback';
@@ -144,12 +144,12 @@ export const WEBHOOK_ERROR: APIWebhookData = {
 	guild_id: '541738403230777351',
 	id: '648663047615021058',
 	name: 'Skyra Development',
-	token: ''
+	token: 'NjU1MTk0Mjc5NTIxNjgxNDMw.XfjHwg.obyAwsj07Y5MCmA994J5NqO8CAY'
 };
 
 export const TOKENS = {
 	BLIZZARD_KEY: '',
-	BOT_TOKEN: '',
+	BOT_TOKEN: 'NjU1MTk0Mjc5NTIxNjgxNDMw.XfjHwg.obyAwsj07Y5MCmA994J5NqO8CAY',
 	BOTS_FOR_DISCORD_KEY: '',
 	BOTS_ON_DISCORD_KEY: '',
 	CRYPTOCOMPARE_KEY: '',
