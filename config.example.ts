@@ -17,10 +17,10 @@ export const ENABLE_INFLUX = 'ENABLE_INFLUX' in process.env ? process.env.ENABLE
 export const ENABLE_LOCAL_POKEDEX = 'ENABLE_LOCAL_POKEDEX' in process.env ? process.env.ENABLE_LOCAL_POKEDEX === 'true' : !DEV;
 export const EVLYN_PORT = 3100;
 
-export const NAME = 'Skyra';
-export const PREFIX = 'sd!';
-export const CLIENT_ID = '';
-export const CLIENT_SECRET = '';
+export const NAME = 'DIDO';
+export const PREFIX = 'd!';
+export const CLIENT_ID = '655194279521681430';
+export const CLIENT_SECRET = 'YZKbDXg7H7DDYbhvYoAeN3N9X9WD7imi';
 export const REDIRECT_URI = 'http://localhost:3000/oauth/callback';
 export const SCOPE = 'identify guilds';
 export const LAVALINK_PASSWORD = '';
@@ -144,12 +144,12 @@ export const WEBHOOK_ERROR: APIWebhookData = {
 	guild_id: '541738403230777351',
 	id: '648663047615021058',
 	name: 'Skyra Development',
-	token: ''
+	token: 'NjU1MTk0Mjc5NTIxNjgxNDMw.XfgmkA.OtFy4kvTv2JTbcl0zAVOW5oZTbM'
 };
 
 export const TOKENS = {
 	BLIZZARD_KEY: '',
-	BOT_TOKEN: '',
+	BOT_TOKEN: 'NjU1MTk0Mjc5NTIxNjgxNDMw.XfgmkA.OtFy4kvTv2JTbcl0zAVOW5oZTbM',
 	BOTS_FOR_DISCORD_KEY: '',
 	BOTS_ON_DISCORD_KEY: '',
 	CRYPTOCOMPARE_KEY: '',
